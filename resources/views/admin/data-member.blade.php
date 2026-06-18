@@ -8,6 +8,34 @@
         </div>
     </div>
 
+    <div class="admin-card mb-4">
+    <form method="GET" class="row g-3 align-items-end">
+
+        <div class="col-md-4">
+            <label class="form-label small fw-semibold text-muted">
+                Cari Nama Member
+            </label>
+
+            <input type="text"
+                   name="search"
+                   class="form-control bg-light"
+                   placeholder="Masukkan nama member..."
+                   value="{{ request('search') }}">
+        </div>
+
+        <div class="col-md-3">
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    Cari
+                </button>
+
+                <a href="{{ url()->current() }}"
+                   class="btn btn-secondary">
+                    Reset
+                </a>
+            </div>
+        </div>
+
     <div class="admin-card">
         <div class="table-responsive">
             <table class="table align-middle mb-0">
@@ -22,7 +50,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($members as $m)
+                    @forelse ($members as $m)
                     @php $membership = $m->membership_aktif; @endphp
                     <tr>
                         <td>
@@ -72,7 +100,17 @@
                             </a>
                         </td>
                     </tr>
-                    @endforeach
+                     @empty
+
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="bi bi-inbox text-muted fs-1 d-block mb-2 opacity-50"></i>
+                            <span class="text-muted">
+                                Data member tidak ditemukan
+                            </span>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

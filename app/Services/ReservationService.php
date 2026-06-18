@@ -57,6 +57,29 @@ class ReservationService
             return ['status' => false, 'message' => 'Sudah reservasi pada tanggal ini.'];
         }
 
+        $jadwalDipakai = Reservasi::where('tanggal', $tanggal)
+            ->where('sesi', 'Private')
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('jam_mulai', [
+                    $request->jam_mulai,
+                    $request->jam_selesai
+                ])
+
+                    ->orWhereBetween('jam_selesai', [
+                        $request->jam_mulai,
+                        $request->jam_selesai
+                    ])
+
+                    ->orWhere(function ($q) use ($request) {
+                        $q->where('jam_mulai', '<=', $request->jam_mulai)
+                            ->where('jam_selesai', '>=', $request->jam_selesai);
+                    });
+            })
+            ->exists();
+        if ($jadwalDipakai) {
+            return ['status' => false, 'message' => 'Jadwal sudah digunakan.'];
+        }
+
         Reservasi::create([
             'user_id' => $user->id,
             'hari' => $request->hari,
@@ -109,10 +132,10 @@ class ReservationService
     public function decrementAndNotify($user, $membership)
     {
         $membership->decrement('sesi_tersisa');
-        
+
         // Refresh data
         $membership->refresh();
-        
+
         $this->checkAndNotify($user, $membership);
     }
 
@@ -135,7 +158,7 @@ class ReservationService
         // Tetap dikirim jika sudah jatuh tempo meskipun sisa sesi belum 0
         $expiredDate = Carbon::parse($membership->expired)->startOfDay();
         $today = Carbon::today();
-        
+
         if ($today->greaterThanOrEqualTo($expiredDate) && $membership->status == 'aktif' && !$membership->notif_expired) {
             try {
                 $membership->update([

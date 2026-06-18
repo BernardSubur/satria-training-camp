@@ -8,6 +8,23 @@
         </div>
     </div>
 
+    <div class="admin-card mb-4">
+        <form method="GET" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold text-muted">Dari Tanggal</label>
+                <input type="date" name="tanggal_mulai" class="form-control bg-light" value="{{ request('tanggal_mulai') }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small fw-semibold text-muted">Sampai Tanggal</label>
+                <input type="date" name="tanggal_selesai" class="form-control bg-light" value="{{ request('tanggal_selesai') }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">Filter</button>
+                 <a href="{{ route('admin.data-reservasi') }}"class="btn btn-secondary"> Reset</a>
+            </div>
+        </form>
+    </div>
+
     <div class="admin-card">
         <div class="table-responsive">
             <table class="table align-middle mb-0">

@@ -11,31 +11,42 @@ use Carbon\Carbon;
 
 class AdminMemberController extends Controller
 {
-    public function dataMember()
-    {
-        $members = User::with('latestMembership')
-            ->whereIn('role', ['member', 'member_private'])
-            ->orderBy('name', 'asc')
-            ->get();
+    public function dataMember(Request $request)
+{
+    $members = User::with('latestMembership')
+        ->whereIn('role', ['member', 'member_private']);
 
-        foreach ($members as $m) {
+    // Filter pencarian nama
+    if ($request->filled('search')) {
+        $members->where('name', 'like', '%' . $request->search . '%');
+    }
 
-            $membership = $m->latestMembership;
+    $members = $members
+        ->orderBy('name', 'asc')
+        ->get();
 
-            if ($membership && $membership->expired && Carbon::now()->greaterThan($membership->expired)) {
-                if ($membership->status !== 'expired') {
-                    $membership->update([
-                        'status' => 'expired',
-                        'sesi_tersisa' => 0
-                    ]);
-                }
+    foreach ($members as $m) {
+
+        $membership = $m->latestMembership;
+
+        if (
+            $membership &&
+            $membership->expired &&
+            Carbon::now()->greaterThan($membership->expired)
+        ) {
+            if ($membership->status !== 'expired') {
+                $membership->update([
+                    'status' => 'expired',
+                    'sesi_tersisa' => 0
+                ]);
             }
-
-            $m->membership_aktif = $membership;
         }
 
-        return view('admin.data-member', compact('members'));
+        $m->membership_aktif = $membership;
     }
+
+    return view('admin.data-member', compact('members'));
+}
 
     public function detailMember($id)
     {

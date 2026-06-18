@@ -8,6 +8,37 @@
         </div>
     </div>
 
+    <div class="admin-card mb-4">
+    <form method="GET" class="row g-3 align-items-end">
+
+        <div class="col-md-4">
+            <label class="form-label small fw-semibold text-muted">
+                Cari Nama Member
+            </label>
+
+            <input type="text"
+                   name="search"
+                   class="form-control bg-light"
+                   placeholder="Masukkan nama member..."
+                   value="{{ request('search') }}">
+        </div>
+
+        <div class="col-md-3">
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    Cari
+                </button>
+
+                <a href="{{ url()->current() }}"
+                   class="btn btn-secondary">
+                    Reset
+                </a>
+            </div>
+        </div>
+
+    </form>
+    </div>
+
     @if(session('success'))
         <div class="alert alert-success border-0 bg-success bg-opacity-10 text-success rounded-3 p-3 mb-4 d-flex align-items-center">
             <i class="bi bi-check-circle-fill fs-5 me-2"></i>
@@ -29,7 +60,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($payments as $key => $payment)
+                    @forelse ($payments as $key => $payment)
                     <tr id="payment-row-{{ $payment->id }}">
                         <td class="text-muted">{{ $key + 1 }}</td>
                         <td>
@@ -83,16 +114,14 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeach
-
-                    @if(count($payments) === 0)
-                    <tr>
-                        <td colspan="6" class="text-center py-5">
-                            <i class="bi bi-inbox text-muted fs-1 d-block mb-2 opacity-50"></i>
-                            <span class="text-muted">Belum ada data pembayaran.</span>
-                        </td>
+                   @empty
+                   <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <i class="bi bi-inbox text-muted fs-1 d-block mb-2 opacity-50"></i>
+                        <span class="text-muted">Data pembayaran tidak ditemukan</span>
+                    </td>
                     </tr>
-                    @endif
+                    @endforelse
                 </tbody>
             </table>
         </div>

@@ -9,9 +9,18 @@ use Illuminate\Support\Facades\Storage;
 
 class AdminPaymentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $payments = Payment::with(['user', 'paket'])->latest()->get();
+        $payments = Payment::with(['user', 'paket']);
+
+        if ($request->filled('search')) {
+            $payments->whereHas('user', function ($query) use ($request) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $payments = $payments->latest()->get();
+
         return view('admin.pembayaran', compact('payments'));
     }
 
