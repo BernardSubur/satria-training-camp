@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Reservasi;
-use App\Models\Transaksi;
+
 use App\Models\Membership;
 
 class User extends Authenticatable
@@ -58,11 +58,6 @@ class User extends Authenticatable
     public function payments()
     {
         return $this->hasMany(Payment::class, 'user_id');
-    }
-
-    public function transaksi()
-    {
-        return $this->hasMany(Transaksi::class, 'user_id');
     }
 
     public function membership()

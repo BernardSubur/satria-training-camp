@@ -16,7 +16,6 @@ class AdminMemberController extends Controller
     $members = User::with('latestMembership')
         ->whereIn('role', ['member', 'member_private']);
 
-    // Filter pencarian nama
     if ($request->filled('search')) {
         $members->where('name', 'like', '%' . $request->search . '%');
     }

@@ -133,7 +133,6 @@ class ReservationService
     {
         $membership->decrement('sesi_tersisa');
 
-        // Refresh data
         $membership->refresh();
 
         $this->checkAndNotify($user, $membership);
@@ -143,7 +142,6 @@ class ReservationService
     {
         if (!$user || !$user->email) return;
 
-        // 1. Notifikasi Sesi Habis (Jika sisa sesi 0 dan belum pernah dikirim notifikasinya)
         if ($membership->sesi_tersisa <= 0 && $membership->status == 'aktif' && !$membership->notif_sesi_habis) {
             try {
                 Mail::to($user->email)->send(new SessionEmptyMail($user));
@@ -154,8 +152,6 @@ class ReservationService
             }
         }
 
-        // 2. Notifikasi Paket Berakhir (Jatuh Tempo)
-        // Tetap dikirim jika sudah jatuh tempo meskipun sisa sesi belum 0
         $expiredDate = Carbon::parse($membership->expired)->startOfDay();
         $today = Carbon::today();
 

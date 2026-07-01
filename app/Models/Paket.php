@@ -18,10 +18,6 @@ class Paket extends Model
         'durasi_bulan'
     ];
 
-    public function transaksi()
-    {
-        return $this->hasMany(Transaksi::class, 'paket_id');
-    }
 
     public function membership()
     {
