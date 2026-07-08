@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<h2>Laporan Pendapatan - Satria Training Camp</h2>
+<h2>Laporan Transaksi - Satria Training Camp</h2>
 <p class="text-center">Dicetak pada: {{ now()->format('d/m/Y H:i') }}</p>
 
 <table>
@@ -40,7 +40,7 @@
 
 </table>
 
-<p class="total">Total Pendapatan : Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
+<p class="total">Total Transaksi : Rp {{ number_format($totalTransaksi, 0, ',', '.') }}</p>
 
 </body>
 </html>

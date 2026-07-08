@@ -319,8 +319,8 @@
                 <i class="bi bi-wallet2"></i> Data Pembayaran
             </a>
 
-            <a href="{{ route('admin.laporan-pendapatan') }}" class="{{ request()->routeIs('admin.laporan-pendapatan') ? 'active' : '' }}">
-                <i class="bi bi-bar-chart-line-fill"></i> Laporan Pendapatan
+            <a href="{{ route('admin.laporan-transaksi') }}" class="{{ request()->routeIs('admin.laporan-transaksi') ? 'active' : '' }}">
+                <i class="bi bi-bar-chart-line-fill"></i> Laporan Transaksi
             </a>
         </div>
 

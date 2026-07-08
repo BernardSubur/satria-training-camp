@@ -16,7 +16,7 @@ class AdminDashboardController extends Controller
         $totalReservasi = Reservasi::count();
         $sesiHariIni = Reservasi::whereDate('tanggal', Carbon::today())->count();
 
-        $totalPendapatan = Payment::with('paket')
+        $totalTransaksi = Payment::with('paket')
             ->where('status', 'success')
             ->get()
             ->sum(fn($p) => $p->paket->harga ?? 0);
@@ -63,7 +63,7 @@ class AdminDashboardController extends Controller
             'totalMember',
             'totalReservasi',
             'sesiHariIni',
-            'totalPendapatan',
+            'totalTransaksi',
             'totalPaketTerjual',
             'totalPending',
             'jadwal'

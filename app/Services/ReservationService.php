@@ -14,7 +14,7 @@ class ReservationService
     public function validateMembership($user)
     {
         $membership = Membership::where('user_id', $user->id)
-            ->where('status', 'aktif')
+            ->whereIn('status', ['aktif', 'expired'])
             ->latest()
             ->first();
 
@@ -50,14 +50,14 @@ class ReservationService
         }
 
         $cek = Reservasi::where('user_id', $user->id)
-            ->where('tanggal', $tanggal)
+            ->whereDate('tanggal', $tanggal)
             ->exists();
 
         if ($cek) {
             return ['status' => false, 'message' => 'Sudah reservasi pada tanggal ini.'];
         }
 
-        $jadwalDipakai = Reservasi::where('tanggal', $tanggal)
+        $jadwalDipakai = Reservasi::whereDate('tanggal', $tanggal)
             ->where('sesi', 'Private')
             ->where(function ($query) use ($request) {
                 $query->whereBetween('jam_mulai', [
@@ -102,7 +102,7 @@ class ReservationService
         ]);
 
         $cek = Reservasi::where('user_id', $user->id)
-            ->where('tanggal', $tanggal)
+            ->whereDate('tanggal', $tanggal)
             ->where('sesi', $request->sesi)
             ->exists();
 
@@ -110,7 +110,7 @@ class ReservationService
             return ['status' => false, 'message' => 'Sudah reservasi untuk sesi ini.'];
         }
 
-        $slot = Reservasi::where('tanggal', $tanggal)
+        $slot = Reservasi::whereDate('tanggal', $tanggal)
             ->where('sesi', $request->sesi)
             ->count();
 

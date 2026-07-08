@@ -5,7 +5,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h3 class="fw-bold text-dark mb-1">Laporan Pendapatan</h3>
+            <h3 class="fw-bold text-dark mb-1">Laporan Transaksi</h3>
             <p class="text-muted mb-0">Rincian pembelian paket dan total pemasukan</p>
         </div>
     </div>
@@ -22,7 +22,7 @@
             </div>
             <div class="col-md-auto d-flex gap-2">
                 <button class="btn btn-primary rounded-pill px-4"><i class="bi bi-funnel me-1"></i> Filter</button>
-                <a href="{{ route('admin.laporan-pendapatan') }}" class="btn btn-secondary rounded-pill px-3">Reset</a>
+                <a href="{{ route('admin.laporan-transaksi') }}" class="btn btn-secondary rounded-pill px-3">Reset</a>
             </div>
             <div class="col-md-auto ms-md-auto">
                 <a href="{{ route('admin.export-pdf') }}" class="btn btn-outline-danger rounded-pill px-4">
@@ -40,8 +40,8 @@
                         <i class="bi bi-cash-stack fs-4 text-white"></i>
                     </div>
                     <div>
-                        <div class="small text-white" style="opacity: 0.7;">Total Pendapatan</div>
-                        <h3 class="fw-bold mb-0 text-white">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</h3>
+                        <div class="small text-white" style="opacity: 0.7;">Total Transaksi</div>
+                        <h3 class="fw-bold mb-0 text-white">Rp {{ number_format($totalTransaksi, 0, ',', '.') }}</h3>
                     </div>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                     <tr>
                         <th>Nama Paket</th>
                         <th class="text-center">Jumlah Terjual</th>
-                        <th class="text-end">Total Pendapatan</th>
+                        <th class="text-end">Total Transaksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -136,7 +136,7 @@
                     </tr>
                     @endforeach
                     @if(count($payments) === 0)
-                    <tr><td colspan="7" class="text-center text-muted py-4">Belum ada data pendapatan.</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted py-4">Belum ada data transaksi.</td></tr>
                     @endif
                 </tbody>
             </table>

@@ -75,8 +75,8 @@
                         <i class="bi bi-wallet2 fs-4 text-white"></i>
                     </div>
                     <div>
-                        <div class="text-white small fw-semibold text-uppercase" style="opacity:0.7;">Total Pendapatan</div>
-                        <h3 class="fw-bold mb-0 text-white">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</h3>
+                        <div class="text-white small fw-semibold text-uppercase" style="opacity:0.7;">Total Transaksi</div>
+                        <h3 class="fw-bold mb-0 text-white">Rp {{ number_format($totalTransaksi, 0, ',', '.') }}</h3>
                     </div>
                 </div>
             </div>

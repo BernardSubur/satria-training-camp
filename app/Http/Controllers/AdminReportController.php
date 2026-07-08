@@ -8,7 +8,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class AdminReportController extends Controller
 {
-    public function laporanPendapatan(Request $request)
+    public function laporanTransaksi(Request $request)
     {
         
         $query = Payment::with(['user', 'paket'])
@@ -23,7 +23,7 @@ class AdminReportController extends Controller
 
         $payments = $query->orderBy('created_at', 'desc')->get();
 
-        $totalPendapatan = $payments->sum(fn($p) => $p->paket->harga ?? 0);
+        $totalTransaksi = $payments->sum(fn($p) => $p->paket->harga ?? 0);
 
         $jumlahTransaksi = $payments->count();
 
@@ -36,9 +36,9 @@ class AdminReportController extends Controller
             ];
         })->values();
 
-        return view('admin.laporan-pendapatan', compact(
+        return view('admin.laporan-transaksi', compact(
             'payments',
-            'totalPendapatan',
+            'totalTransaksi',
             'jumlahTransaksi',
             'perPaket'
         ));
@@ -50,13 +50,13 @@ class AdminReportController extends Controller
             ->where('status', 'success')
             ->get();
 
-        $totalPendapatan = $payments->sum(fn($p) => $p->paket->harga ?? 0);
+        $totalTransaksi = $payments->sum(fn($p) => $p->paket->harga ?? 0);
 
-        $pdf = Pdf::loadView('admin.pdf-pendapatan', compact(
+        $pdf = Pdf::loadView('admin.pdf-transaksi', compact(
             'payments',
-            'totalPendapatan'
+            'totalTransaksi'
         ));
 
-        return $pdf->download('laporan-pendapatan.pdf');
+        return $pdf->download('laporan-transaksi.pdf');
     }
 }

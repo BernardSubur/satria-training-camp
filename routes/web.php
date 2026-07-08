@@ -67,7 +67,7 @@ Route::prefix('admin')
 
         Route::get('/data-reservasi', [AdminReservasiController::class, 'dataReservasi'])->name('data-reservasi');
 
-        Route::get('/laporan-pendapatan', [AdminReportController::class, 'laporanPendapatan'])->name('laporan-pendapatan');
+        Route::get('/laporan-transaksi', [AdminReportController::class, 'laporanTransaksi'])->name('laporan-transaksi');
 
         Route::get('/export-pdf', [AdminReportController::class, 'exportPDF'])->name('export-pdf');
 
