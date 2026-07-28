@@ -82,4 +82,49 @@ Route::prefix('admin')
         Route::delete('/pembayaran/{id}', [AdminPaymentController::class, 'destroy'])->name('pembayaran.destroy');
     });
 
+Route::post('/demo-register', function () {
+    // Simulasi paket
+    $paket = \App\Models\Paket::first() ?? new \App\Models\Paket([
+        'id' => 999,
+        'nama_paket' => 'Demo Paket',
+        'jumlah_sesi' => 16,
+        'durasi_bulan' => 1
+    ]);
+    
+    $randomStr = \Illuminate\Support\Str::random(5);
+    
+    // Fake User
+    $fakeUser = new \App\Models\User([
+        'name' => 'Demo User ' . $randomStr,
+        'email' => 'demo' . $randomStr . '@example.com',
+        'role' => 'member',
+        'is_profile_complete' => true // Bypass profil
+    ]);
+    // Set a fake ID so that queries won't fail (though we will bypass them)
+    $fakeUser->id = 999999; 
+
+    // Fake Membership
+    $fakeMembership = clone $paket; 
+    $fakeMembership = new \App\Models\Membership([
+        'user_id' => $fakeUser->id,
+        'paket_id' => $paket->id,
+        'sesi_tersisa' => $paket->jumlah_sesi ?? 16,
+        'mulai' => now(),
+        'expired' => now()->addMonths($paket->durasi_bulan ?? 1),
+        'status' => 'aktif',
+    ]);
+    $fakeMembership->id = 999999;
+    
+    // Store in Session
+    session([
+        'demo_user' => $fakeUser,
+        'demo_membership' => $fakeMembership,
+        'demo_reservasi' => []
+    ]);
+
+    // Force Auth to pass middleware manually since Auth::login() requires DB
+    return redirect()->route('dashboard');
+})->name('demo.register');
+
+
 require __DIR__ . '/auth.php';

@@ -70,18 +70,29 @@ class ChatbotController extends Controller
 
     private function getUserData($user): string
     {
-        $membership = Membership::with('paket')
-            ->where('user_id', $user->id)
-            ->where('status', 'aktif')
-            ->latest()
-            ->first();
+        if (session()->has('demo_user')) {
+            $membership = session('demo_membership');
+            $reservasi = collect(session('demo_reservasi', []))
+                ->where('status', 'booked')
+                ->filter(function ($r) {
+                    return Carbon::parse($r->tanggal)->greaterThanOrEqualTo(Carbon::today());
+                })
+                ->sortBy('tanggal')
+                ->take(5);
+        } else {
+            $membership = Membership::with('paket')
+                ->where('user_id', $user->id)
+                ->where('status', 'aktif')
+                ->latest()
+                ->first();
 
-        $reservasi = Reservasi::where('user_id', $user->id)
-            ->where('status', 'booked')
-            ->where('tanggal', '>=', Carbon::today())
-            ->orderBy('tanggal', 'asc')
-            ->take(5)
-            ->get();
+            $reservasi = Reservasi::where('user_id', $user->id)
+                ->where('status', 'booked')
+                ->where('tanggal', '>=', Carbon::today())
+                ->orderBy('tanggal', 'asc')
+                ->take(5)
+                ->get();
+        }
 
         $data = "NAMA USER: {$user->name}\n";
         $data .= "EMAIL: {$user->email}\n";

@@ -28,18 +28,25 @@ class DashboardController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        $membership = Membership::where('user_id', $user->id)->latest()->first();
+        // Demo Bypass
+        if (session()->has('demo_user')) {
+            $membership = session('demo_membership');
+            $reservasis = collect(session('demo_reservasi', []));
+        } else {
+            $membership = Membership::where('user_id', $user->id)->latest()->first();
 
-        if (!$membership) {
-            return redirect()->route('paket')->with('error', 'Silakan membeli paket terlebih dahulu');
+            if (!$membership) {
+                return redirect()->route('paket')->with('error', 'Silakan membeli paket terlebih dahulu');
+            }
         }
 
         $popup = null;
 
         if ($membership) {
-            $this->reservationService->checkAndNotify($user, $membership);
-            
-            $membership->refresh();
+            if (!session()->has('demo_user')) {
+                $this->reservationService->checkAndNotify($user, $membership);
+                $membership->refresh();
+            }
 
             if ($membership->status === 'expired') {
                 $popup = [
@@ -65,57 +72,59 @@ class DashboardController extends Controller
 
         $now = Carbon::now();
 
-        $reservasis = Reservasi::where('user_id', $user->id)
-            ->get()
-            ->filter(function ($r) use ($now) {
+        if (!session()->has('demo_user')) {
+            $reservasis = Reservasi::where('user_id', $user->id)
+                ->get()
+                ->filter(function ($r) use ($now) {
 
-                $jamMulai = null;
-                $jamSelesai = null;
+                    $jamMulai = null;
+                    $jamSelesai = null;
 
-                if ($r->jam_mulai) {
-                    $tanggal = Carbon::parse($r->tanggal)->format('Y-m-d');
+                    if ($r->jam_mulai) {
+                        $tanggal = Carbon::parse($r->tanggal)->format('Y-m-d');
 
-                    $jamMulai = Carbon::createFromFormat('Y-m-d H:i:s', $tanggal . ' ' . date('H:i:s', strtotime($r->jam_mulai)));
-                    $jamSelesai = Carbon::createFromFormat('Y-m-d H:i:s', $tanggal . ' ' . date('H:i:s', strtotime($r->jam_selesai)));
-                }
-
-                elseif ($r->sesi) {
-                    $tanggal = Carbon::parse($r->tanggal)->format('Y-m-d');
-
-                    if ($r->hari == 'Selasa' || $r->hari == 'Kamis') {
-
-                        $jamMulai = $r->sesi == 'Sesi I'
-                            ? Carbon::parse($tanggal . ' 16:30')
-                            : Carbon::parse($tanggal . ' 19:00');
-
-                        $jamSelesai = $r->sesi == 'Sesi I'
-                            ? Carbon::parse($tanggal . ' 18:00')
-                            : Carbon::parse($tanggal . ' 20:30');
-                    } else {
-
-                        $jamMulai = $r->sesi == 'Sesi I'
-                            ? Carbon::parse($tanggal . ' 15:30')
-                            : Carbon::parse($tanggal . ' 17:00');
-
-                        $jamSelesai = $r->sesi == 'Sesi I'
-                            ? Carbon::parse($tanggal . ' 17:00')
-                            : Carbon::parse($tanggal . ' 18:30');
-                    }
-                }
-
-                if ($jamSelesai && $now->greaterThan($jamSelesai)) {
-
-                    if ($r->status == 'booked') {
-                        $r->update(['status' => 'selesai']);
+                        $jamMulai = Carbon::createFromFormat('Y-m-d H:i:s', $tanggal . ' ' . date('H:i:s', strtotime($r->jam_mulai)));
+                        $jamSelesai = Carbon::createFromFormat('Y-m-d H:i:s', $tanggal . ' ' . date('H:i:s', strtotime($r->jam_selesai)));
                     }
 
-                    return false;
-                }
+                    elseif ($r->sesi) {
+                        $tanggal = Carbon::parse($r->tanggal)->format('Y-m-d');
 
-                return true;
-            })
-            ->sortByDesc('tanggal')
-            ->values();
+                        if ($r->hari == 'Selasa' || $r->hari == 'Kamis') {
+
+                            $jamMulai = $r->sesi == 'Sesi I'
+                                ? Carbon::parse($tanggal . ' 16:30')
+                                : Carbon::parse($tanggal . ' 19:00');
+
+                            $jamSelesai = $r->sesi == 'Sesi I'
+                                ? Carbon::parse($tanggal . ' 18:00')
+                                : Carbon::parse($tanggal . ' 20:30');
+                        } else {
+
+                            $jamMulai = $r->sesi == 'Sesi I'
+                                ? Carbon::parse($tanggal . ' 15:30')
+                                : Carbon::parse($tanggal . ' 17:00');
+
+                            $jamSelesai = $r->sesi == 'Sesi I'
+                                ? Carbon::parse($tanggal . ' 17:00')
+                                : Carbon::parse($tanggal . ' 18:30');
+                        }
+                    }
+
+                    if ($jamSelesai && $now->greaterThan($jamSelesai)) {
+
+                        if ($r->status == 'booked') {
+                            $r->update(['status' => 'selesai']);
+                        }
+
+                        return false;
+                    }
+
+                    return true;
+                })
+                ->sortByDesc('tanggal')
+                ->values();
+        }
 
         $latihanHariIni = 0;
         $latihanSelesai = 0;

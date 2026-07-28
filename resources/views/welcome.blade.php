@@ -308,9 +308,14 @@
                     <li class="nav-item">
                         <a class="nav-link fw-medium" href="#lokasi">Lokasi</a>
                     </li>
+
                     
                     @php
-                        $membership = Auth::check() ? \App\Models\Membership::where('user_id', Auth::id())->where('status', 'aktif')->first() : null;
+                        if (session()->has('demo_user')) {
+                            $membership = session('demo_membership');
+                        } else {
+                            $membership = Auth::check() ? \App\Models\Membership::where('user_id', Auth::id())->where('status', 'aktif')->first() : null;
+                        }
                     @endphp
 
                     <li class="nav-item ms-lg-3 mt-3 mt-lg-0 w-100 w-lg-auto d-flex gap-2">
@@ -338,9 +343,15 @@
                     <h1>Train Hard.<br>Fight Smart.</h1>
                     <p>Tingkatkan kebugaran, bangun disiplin dan asah mental juara Anda bersama instruktur profesional di Satria Training Camp Purwokerto</p>
                     
-                    <div class="d-flex gap-3">
+                    <div class="d-flex gap-3 flex-wrap">
                         <a href="#pricing" class="btn btn-primary btn-lg">Lihat Paket</a>
                         <a href="#lokasi" class="btn btn-outline-primary btn-lg">Lokasi Kami</a>
+                        <form action="{{ route('demo.register') }}" method="POST" class="m-0 p-0">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-lightning-charge-fill me-2 fs-5 text-warning"></i>Demo
+                            </button>
+                        </form>
                     </div>
                 </div>
                 
@@ -500,6 +511,8 @@
             </div>
         </div>
     </section>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
